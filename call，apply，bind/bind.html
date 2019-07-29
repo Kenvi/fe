@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>手写bind</title>
+</head>
+<body>
+  <script>
+    Function.prototype.myApply = function (context, args) {
+      //这里默认不传就是给window,也可以用es6给参数设置默认参数
+      context = context || window
+      args = args ? args : []
+      //给context新增一个独一无二的属性以免覆盖原有属性
+      const key = Symbol()
+      context[key] = this
+      //通过隐式绑定的方式调用函数
+      const result = context[key](...args)
+      //删除添加的属性
+      delete context[key]
+      //返回函数调用的返回值
+      return result
+    }
+
+    Function.prototype.myCall = function (context, ...args) {
+      //这里默认不传就是给window,也可以用es6给参数设置默认参数
+      context = context || window
+      args = args ? args : []
+      //给context新增一个独一无二的属性以免覆盖原有属性
+      const key = Symbol()
+      context[key] = this
+      //通过隐式绑定的方式调用函数
+      const result = context[key](...args)
+      //删除添加的属性
+      delete context[key]
+      //返回函数调用的返回值
+      return result
+    }
+
+    Function.prototype.myBind = function (context, args) {
+      //这里默认不传就是给window,也可以用es6给参数设置默认参数
+      context = context || window
+      args = args ? args : []
+      const fn = this
+
+      return function (args2) {
+        return fn.myApply(context, [...args, ...args2])
+      }
+    }
+
+    
+    var a = 10
+    const obj = {a: 20}
+    const func = function () {
+      console.log(arguments)
+      console.log(this.a)
+    }
+    func.myApply(obj, [2, 3, 4])
+    func.myCall(obj, 2, 3, 4)
+    const f1 = func.myBind(window, [2, 3])
+    f1([4, 5])
+  </script>
+</body>
+</html>
