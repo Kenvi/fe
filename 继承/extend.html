@@ -42,17 +42,46 @@
 			if(sup.prototype.constructor === Object.prototype.constructor){
 				sup.prototype.constructor = sup; 
 			}
-    }  
+    }
+
+    // extend2方法：只继承一次父类属性和方法和父类原型对象
+    function extend2(sub,sup){
+      /* Object.create()方法创建一个新对象，使用现有的对象来提供新创建的对象的__proto__。
+      * Object.create(proto[, propertiesObject])
+      *  proto 新创建对象的原型对象。
+      *  propertiesObject 可选。如果没有指定为 undefined，则是要添加到新创建对象的可枚举属性
+      * （即其自身定义的属性，而不是其原型链上的枚举属性）对象的属性描述符以及相应的属性名称。
+      */
+
+			sub.prototype = Object.create(sup.prototype); //原型继承
+      sub.prototype.constructor = sub; // 还原子类构造器
+      
+			// 保存父类的原型对象：（1）方便解耦；（2）方便获得父类的原型对象
+			sub.superClass = sup.prototype; // 子类自定义一个静态属性接受父类原型对象
+			// 判断父类的原型对象的构造器,如果是指向Object.prototype则改为sup
+			if(sup.prototype.constructor === Object.prototype.constructor){
+				sup.prototype.constructor = sup; 
+			}
+    }
     
     function Boy(name,age,sex){
 			Boy.superClass.constructor.call(this,name,age); //彻底清除与父类的关系，降低耦合	
 			this.sex = sex;
 		}
+    function Girl(name,age,sex){
+			Girl.superClass.constructor.call(this,name,age); //彻底清除与父类的关系，降低耦合	
+			this.sex = sex;
+		}
 		extend(Boy,Person);	
+		extend2(Girl,Person);	
 		Boy.prototype.say = function(){console.log('Boy.say!')};
+		Girl.prototype.say = function(){console.log('Girl.say!')};
 		var boy = new Boy('chen',22,'man');
+		var girl = new Girl('liang',22,'woman');
 		boy.say(); // Boy.say!
+		girl.say(); // Girl.say!
     Boy.superClass.say.call(boy); //chen
+    Girl.superClass.say.call(girl); //liang
     
     // es6 class
     class Person1 {
