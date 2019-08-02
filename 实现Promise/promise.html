@@ -7,6 +7,7 @@
   <title>实现Promise</title>
 </head>
 <body>
+  <script src="./promise.js"></script>
   <script>
     class Promise_1 {
       constructor(task) {
@@ -82,7 +83,7 @@
 
           switch (this.status) {
               case 'pending':
-                  promise2 = new Promise((resolve,reject) => {
+                  promise2 = new Promise_1((resolve,reject) => {
                       this.onFulfilledList.push(() => {
                           let x = onFulfilled(this.resolveData);
                           this.resolvePromise(promise2, x, resolve, reject);
@@ -94,19 +95,19 @@
                   });
                   break;
               case 'fulfilled':
-                  promise2 = new Promise((resolve, reject) => {
+                  promise2 = new Promise_1((resolve, reject) => {
                       let x = onFulfilled(this.resolveData);
                       this.resolvePromise(promise2, x, resolve, reject);
                   });
                   break;
               case 'rejected':
-                  promise2 = new Promise((resolve, reject) => {
+                  promise2 = new Promise_1((resolve, reject) => {
                       let x = onRejected(this.rejectData);
                       this.resolvePromise(promise2, x, resolve, reject);
                   });
                   break;
               default:
-                  throw 'promise status error';
+                  throw 'Promise_1 status error';
           }
 
           return promise2;
@@ -124,7 +125,7 @@
 
           let promise2;
 
-          promise2 = new Promise((resolve, reject) => {
+          promise2 = new Promise_1((resolve, reject) => {
               let x = onRejected(this.rejectData);
               this.resolvePromise(promise2, x, resolve, reject);
           });
@@ -133,7 +134,7 @@
       /**
        * 递归方法，多次then
        *
-       * @param {Promise} promise2 第二个promise
+       * @param {Promise_1} promise2 第二个promise
        * @param {any} x 上一次then所返回的数据
        * @param {function} resolve 当前的成功方法
        * @param {function} reject 当前的失败方法
@@ -147,7 +148,7 @@
               return reject(new TypeError('循环引用'));
           }
 
-          if (x instanceof Promise) {
+          if (x instanceof Promise_1) {
               if(x.status === 'pending'){
                   x.then(function(y){
                       resolvePromise(promise2, y, resolve, reject);
@@ -167,7 +168,7 @@
                           resolvePromise(promise2, y, resolve, reject)
                       }, reject);
                   } else {
-                      // 如果then 不为fn 则以x为值fulfill promise
+                      // 如果then 不为fn 则以x为值fulfill Promise_1
                       resolve(x);
                   }
               } catch (e) {
@@ -183,14 +184,14 @@
        * 1. 如果有一个为reject，则返回reject
        *
        * @param {Array} promiseList 需要执行的数组
-       * @return {Promise}
+       * @return {Promise_1}
        */
       static all(promiseList) {
           // 如果传入不是数组，抛出错误
           if (!Array.isArray(promiseList)) {
               new TypeError('must be an array');
           }
-          return new Promise((resolve, reject) => {
+          return new Promise_1((resolve, reject) => {
               // 如果传入数组长度为0 则直接resolve
               if (promiseList.length === 0) {
                   resolve([]);
@@ -201,7 +202,7 @@
               let resI = 0;
 
               promiseList.forEach((item, index) => {
-                  if (item instanceof Promise) {
+                  if (item instanceof Promise_1) {
                       item.then(
                           res => {
                               allData[index] = res;
@@ -231,7 +232,7 @@
        * race 方法 当某一个promise完成，则返回
        *
        * @param {Array} promiseList 需要执行的数组
-       * @return {Promise}
+       * @return {Promise_1}
        */
       static race(promiseList) {
           // 如果传入不是数组，抛出错误
@@ -239,7 +240,7 @@
               new TypeError('must be an array');
           }
 
-          return new Promise((resolve, reject) => {
+          return new Promise_1((resolve, reject) => {
               // 如果传入数组长度为0 则直接resolve
               if (promiseList.length === 0) {
                   resolve([]);
@@ -247,7 +248,7 @@
 
               promiseList.forEach(item => {
                   promiseList.forEach(item => {
-                      if (item instanceof Promise) {
+                      if (item instanceof Promise_1) {
                           item.then(
                               res => {
                                   resolve(res);
@@ -268,11 +269,11 @@
        * resolve方法
        *
        * @param value
-       * @return {Promise}
+       * @return {Promise_1}
        */
       static resolve(value) {
-          return new Promise((resolve, reject) => {
-              if (value instanceof Promise) {
+          return new Promise_1((resolve, reject) => {
+              if (value instanceof Promise_1) {
                   value.then(res => {
                       resolve(res);
                   })
@@ -286,23 +287,24 @@
        * reject方法
        *
        * @param reason
-       * @return {Promise}
+       * @return {Promise_1}
        */
       static reject(reason) {
-          return new Promise((resolve, reject) => {
+          return new Promise_1((resolve, reject) => {
               reject(reason);
           })
       }
    } 
 
-   const test = new Promise_1(function(resolve) {
-     setTimeout(() => {resolve(1)}, 2000)
+   var t = new Promise_(function(resolve, reject) {
+     setTimeout(() => {reject(1)}, 1000)
+   }).then((res) => {
+      console.log(res)
+   }).catch(err => {
+     console.log({err})
    })
    console.log(222)
 
-   test.then(res => {
-     console.log(res)
-   })
   </script>
 </body>
 </html>
