@@ -123,6 +123,8 @@
               onRejected = () => {};
           }
 
+          return this.then(null, onRejected)
+
           let promise2;
 
           promise2 = new Promise_1((resolve, reject) => {
@@ -296,15 +298,54 @@
       }
    } 
 
-   var t = new Promise_(function(resolve, reject) {
-     setTimeout(() => {reject(1)}, 1000)
+   var t = new Promise_1(function(resolve, reject) {
+     console.log('promise start')
+     setTimeout(() => {
+       console.log('promise setTimeout')
+       resolve(1)
+      }, 0)
+    //  resolve(1)
+     reject(22)
+     console.log('promise continue')
    }).then((res) => {
-      console.log(res)
+      console.log('then1 res')
+      return 3
+   }, rej => {
+    console.log('then1 rej')
+    return 777
    }).catch(err => {
-     console.log({err})
+     console.log('catch', err)
+     return 4
+   }).then(res1 => {
+     console.log('then2 res')
+   }).then(res2 => {
+     console.log('then3 res')
    })
-   console.log(222)
+  //  console.log(222)
+   setTimeout(() => {console.log('global setTimeout')}, 0)
+   /*
+    Promise_
+    promise start
+    promise continue
+    promise setTimeout
+    global setTimeout
+    then1 res
+    then2 res
+    then3 res
+   */
+    
+   /*
+    原生Promise
+    promise start
+    promise continue
+    promise setTimeout
+    then1 res
+    then2 res
+    then3 res
+    global setTimeout
+  */
 
+  // Promise_的then方法使用了setTimeout（宏任务）代替原生Promse的then方法（微任务）实现异步，但如果全局作用域也有宏任务则会有以上区别
   </script>
 </body>
 </html>
