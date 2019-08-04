@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>事件委托</title>
+  <style>
+    .div{height: 300px;background: #eee;}
+  </style>
+</head>
+<body>
+  <div class="div">
+    <p>1111</p>
+    <p>2222</p>
+    <p>3333</p>
+  </div>
+
+  <script>
+    function clickFunc ({target}) {
+      const tag = target.nodeName.toLocaleLowerCase()
+      if (tag === 'span') target.style.color = 'red'
+    }
+    window.onload = function () {
+      const div = document.querySelector('.div')
+      div.addEventListener('click', clickFunc, false)
+
+      const span = document.createElement('span')
+      span.innerText = '4444'
+      setTimeout(() => {div.appendChild(span)}, 1000)
+    }
+  </script>
+</body>
+</html>
