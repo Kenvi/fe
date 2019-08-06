@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>实现ajax</title>
+</head>
+
+<body>
+  <script>
+    const url = 'http://localhost/emt/v-v1-zh_CN-/emt/main/json/imgData.json'
+    const url1 = 'http://localhost/emMiniApi.do'
+
+    function request({method, url, headers, data}, cb) {
+      if (!url) return console.log('无url')
+      method = method || 'get'
+      const xhr = new XMLHttpRequest()
+      xhr.open(method, url)
+      // xhr.setRequestHeader('Content-Type', 'application/json')
+      if (headers) {
+        for (let key in headers) xhr.setRequestHeader(key, headers[key])
+      }
+      xhr.send(data)
+      // 监听事件，只要 readyState 的值变化，就会调用 readystatechange 事件
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4) {
+          const status = xhr.status;
+          // status：响应的HTTP状态码，以2开头的都是成功
+          // const _res = JSON.parse()
+          if (status >= 200 && status < 300) {
+            typeof cb === 'function' && cb({status: 'success', data: xhr.response})
+          } else {
+            typeof cb === 'function' && cb({status: 'fail', data: xhr.response})
+          }
+        } else {
+          // typeof cb === 'function' && cb({status: 'fail', data: null})
+        }
+      }
+    }
+
+    request({
+      url: url1,
+      headers: {'Content-Type': 'application/json'},
+      method: 'post',
+      data: JSON.stringify({device: 5, method: 'getInformationList'})
+    }, function(res){
+      console.log(res)
+    })
+  </script>
+</body>
+
+</html>
