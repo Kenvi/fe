@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>手写响应式数据更新</title>
+</head>
+<body>
+  <input type="text" class="input" />
+  <div class="app"></div>
+  <input type="text" class="input1" />
+  <div class="app1"></div>
+  <input type="text" class="input2" />
+  <div class="app2"></div>
+  <script>
+    const input = document.querySelector('.input')
+    const input1 = document.querySelector('.input1')
+    const input2 = document.querySelector('.input2')
+    const app = document.querySelector('.app')
+    const app1 = document.querySelector('.app1')
+    const app2 = document.querySelector('.app2')
+
+    const data = {
+      val: 0
+    }
+
+    Object.defineProperty(data, 'val', {
+      configurable: true,
+      enumerable: true,
+      get: function() {
+        return this.val || null
+      },
+      set: function(val) {
+        setValue(val)
+        this.value = val
+      }
+    })
+
+    function setValue(value) {
+      if (`${value}` === app.innerText) return
+      app.innerText = value
+    }
+
+    function updateFunc(e) {
+      data.val = e.target.value
+      // setValue(data.value)
+    }
+
+    function updateFunc1(e) {
+      proxy[0].val = e.target.value
+      proxy.push({val: e.target.value})
+      // setValue(data.value)
+    }
+    function updateFunc2(e) {
+      console.log(JSON.stringify(proxy))
+      proxy[1].val = e.target.value
+      console.log(JSON.stringify(proxy))
+      // setValue(data.value)
+    }
+
+    input.addEventListener('keyup', updateFunc, false)
+
+    const arr = [{val: 1}, {val: 2}]
+    const proxy = new Proxy(arr, {
+      get(target, key, receiver) {
+        // console.log(key)
+        return Reflect.get(target, key, receiver)
+      },
+      set(target, key, value, receiver){
+        console.log(key, value)
+        return Reflect.set(target, key, value, receiver)
+      }
+    })
+
+    input1.addEventListener('keyup', updateFunc1, false)
+    input2.addEventListener('keyup', updateFunc2, false)
+
+
+  </script>
+</body>
+</html>
